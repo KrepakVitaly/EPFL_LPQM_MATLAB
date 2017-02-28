@@ -1,0 +1,3 @@
+clear;
+
+app = simpleStockTicker();

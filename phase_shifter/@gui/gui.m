@@ -1,60 +1,51 @@
-classdef gui < handle
+classdef Gui < handle
     properties
-        Figure                  % Graphics handles
-        Axis
-        Line
-        TickerText
-        TickerEdit
-        PushButton
-        Frame
-        Panel
-    end
+        Figure;                  % Graphics handles
+        DelayLabel;
+        DelayEdit;
+        ForceInitButton;
+        WriteDelayButton;
+        Panel;
+        ProductNameString;
+        ProductNameField;
+        ModuleCountString;
+        ModuleCountField;
+        SlotString;
+        SlotField;
+        ChassisString;
+        ChassisField;
+        SerialNumberString;
+        SerialNumberField;
+        Aou;
+    end;
 
     methods
-        function app = gui
-            % Main figure
-            app.Figure = figure();
-            app.Figure.DockControls   = 'off';
-            app.Figure.MenuBar        = 'none';
-            app.Figure.NumberTitle    = 'off';
-            app.Figure.Name           = 'Phase-shifter controller';
-            app.Figure.ToolBar        = 'auto';
-            app.Figure.Visible        = 'on';
-            app.Figure.Renderer       = 'opengl'; %or 'painters'
-            app.Figure.RendererMode      = 'auto'; %or 'manual'
-            app.Figure.GraphicsSmoothing = 'on';
-            
-            app.Figure.CloseRequestFcn   = @app.closeApp;
-            
-%             app.Axis = axes('Parent',app.Figure);           % Axis for prices
-%             app.Axis.Position = [.13 .15 .78 .75];
-%             
-%             app.TickerText = uicontrol(app.Figure,...          % 'Symbol' label
-%                 'Style','text','Position',[20 20 50 20],...
-%                 'String','Symbol:');
-% 
-%             ylabel(app.Axis,'Stock value ($)') ;
-%             set(app.Axis,'XTickLabel','') ;
-            
-            app.PushButton = uicontrol(app.Figure);
-            app.PushButton.Style = 'pushbutton';
-            app.PushButton.Position = [.0 .1 .1 .2];
-            
-%             app.Frame = uicontrol(app.Figure);
-%             app.Frame.Style = 'frame';
-%             app.Frame.Position = [ 0 0 0 0.4 ];
-            
-            app.Panel = uipanel('Parent',app.Figure,'FontSize',12,...
-              'Position',[.4 .1 .5 .1]);
-
+        function obj = Gui
+            obj.uiInit;
+            % Load Visual Studio Library
+            NET.addAssembly('C:/Program Files (x86)/Signadyne/Libraries/VisualStudio_AnyCPU/Reference Assemblies/VS2008/Signadyne.dll');
+            obj.Aou = Signadyne.SD_AOU();
+%             obj.moduleInit;
         end
-
-        function closeApp(app,hObject,eventdata)
-        % This function runs when the app is closed
-            delete(app.Figure);
+        
+        function closeobj(obj,hObject,eventdata)
+        % This function runs when the obj is closed
+            delete(obj.Figure);
         end
-
-
-
+        
+        function forceModuleInit(obj, eventdata, handles)
+            obj.moduleInit;
+        end
+        
+        function writeDelay(obj, eventdata, handles)
+            delay = str2num(obj.DelayEdit.String);
+%             disp(delay);
+            obj.Aou.writeRegister(0, delay);
+        end
+    end
+        
+    methods (Access = private)
+        moduleInit(obj);
+        err_code = uiInit(obj);
     end
 end                                                      % End of class definition

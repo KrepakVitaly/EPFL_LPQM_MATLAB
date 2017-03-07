@@ -17,7 +17,6 @@ classdef Gui < handle
         SerialNumberString;
         SerialNumberField;
         Aio;
-        SDmoduleID;
     end;
 
     methods
@@ -40,12 +39,8 @@ classdef Gui < handle
         end
         
         function writeDelay(obj, eventdata, handles)
-            delay = str2num(obj.DelayEdit.String)*10;
-%             delay = [delay0 delay0 delay0 delay0];
-%             pv = libpointer('int32Ptr',delay0);
-            obj.Aio.FPGAwritePCport(0, delay, 0, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
-%                                                              (int moduleID, int port, int* buffer, int nDW, int address, int addressMode, int accessMode);
-%             Signadyne.SD_Module_Import.SD_Module_FPGAwritePCport(obj.SDmoduleID, 0, pv, 1, 0, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA );
+            delay = str2num(obj.DelayEdit.String);
+            obj.Aio.FPGAwritePCport(port, int[] buffer, int address, SD_AddressingMode addressMode, SD_AccessMode accessMode)
         end
     end
         

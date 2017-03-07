@@ -19,9 +19,9 @@ function err_code = uiInit( obj )
             obj.DelayLabel.Style = 'text';
             obj.DelayLabel.Units = 'normalized';
             obj.DelayLabel.FontSize = 12;
-            obj.DelayLabel.String = 'Enter the delay';
+            obj.DelayLabel.String = 'Enter the delay (ns)';
             obj.DelayLabel.HorizontalAlignment = 'left';
-            obj.DelayLabel.Position = [.2 .7 .2 .05]; %[left bottom width height]
+            obj.DelayLabel.Position = [.10 .7 .25 .05]; %[left bottom width height]
             
             obj.DelayEdit = uicontrol(obj.Figure);
             obj.DelayEdit.Style = 'edit';

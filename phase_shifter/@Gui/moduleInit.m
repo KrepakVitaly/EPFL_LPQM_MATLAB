@@ -13,17 +13,22 @@ function moduleInit(obj)
             
             serial_number = char(Signadyne.SD_Module.getSerialNumber(chassis, slot));
             
-            % Create module object
             
-            if obj.Aou.isOpen() % By default module should not be opened.
-                disp('Module is alredy opened. Demo will close it.');
-                obj.Aou.close();
-            end;
+            if obj.Aio.isOpen() % By default module should not be opened.
+                disp('AIOmodule is alredy opened. I will close it.');
+                obj.Aio.close();
+            end
             % Open module
-            if obj.Aou.open(product_name, chassis, slot) < 0
-                disp(['Error opening module ', product_name, ', make sure the slot and chassis are correct.']);
+            SDmoduleID = obj.Aio.open(product_name, chassis, slot)
+            if SDmoduleID < 0
+                disp(['Error opening AIOmodule ', product_name, ', make sure the slot and chassis are correct.']);
                 disp('Aborting demo...');
                 return;
             end
+            %(int nDAQ, int nDAQpointsPerCycle, int nCycles, int triggerDelay, int triggerMode)
+            obj.Aio.DAQconfig(0, 500, 1, 0, 0);
+            obj.Aio.DAQconfig(1, 500, 1, 0, 0);
+            obj.Aio.DAQstart(0);
+            obj.Aio.DAQstart(1);
 end
 

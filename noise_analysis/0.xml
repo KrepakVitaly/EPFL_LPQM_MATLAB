@@ -1,0 +1,105 @@
+<?xml version='1.0' standalone='no'?>
+<!DOCTYPE swpl>
+<swpl>
+ <Header>
+  <properties>
+   <Version type="bstr" value="2.15.2.0"/>
+   <Comment type="bstr" value=""/>
+  </properties>
+ </Header>
+ <Tree>
+  <SaveRecallManager id="E7C58DF4-036F-11D6-A542-00B0D0BA0D57">
+   <properties>
+    <Version type="bstr" value="3.1.15.203"/>
+   </properties>
+   <KernelLISelect id="C9E5C2F4-9641-4E16-AA46-5627CF6B3351">
+    <properties>
+     <Version type="bstr" value="1.0"/>
+     <VirtLiMapping type="array|bstr" count="0" value=""/>
+    </properties>
+    <LogicalInstrument_0 id="EE681661-7A7B-420A-9A9C-E429BF4B3C1A">
+     <properties>
+      <SaveSetHeaderFlag type="bool" value="true"/>
+     </properties>
+    </LogicalInstrument_0>
+   </KernelLISelect>
+   <KernelMassMemory id="49457654-F623-11D5-A53D-00B0D0BA0D57">
+    <properties>
+     <Version type="bstr" value="1.0"/>
+     <VirtLiMapping type="array|bstr" count="0" value=""/>
+    </properties>
+    <LogicalInstrument_0 id="49457657-F623-11D5-A53D-00B0D0BA0D57">
+     <properties>
+      <SaveSetHeaderFlag type="bool" value="true"/>
+     </properties>
+     <DatabaseGroup2 id="2C22034B-DF63-464B-9DB3-DE659FFE3FC2">
+      <properties/>
+     </DatabaseGroup2>
+     <All id="6B374682-4027-11D7-8209-00B0D0D4F3D0">
+      <properties/>
+      <SaveFileType id="1C7F2350-2611-11D6-A55F-00B0D0BA0D57">
+       <properties>
+        <Value type="bstr" value="TextXml"/>
+       </properties>
+      </SaveFileType>
+      <Version id="EEBC53CF-10C6-11D6-A54F-00B0D0BA0D57">
+       <properties>
+        <Value type="bstr" value="2.15.2.0"/>
+       </properties>
+      </Version>
+      <Filesystem id="EA7F7B53-95B6-11D7-8259-00B0D0D4F3D0">
+       <properties/>
+      </Filesystem>
+      <Filename id="E7C58DF8-036F-11D6-A542-00B0D0BA0D57">
+       <properties>
+        <Value type="bstr" value="D:\x5cnoisemeas\x5c0.xml"/>
+       </properties>
+      </Filename>
+     </All>
+     <DatabaseGroup id="25BA903A-59E3-466A-B19A-837CD9C4635B">
+      <properties/>
+     </DatabaseGroup>
+    </LogicalInstrument_0>
+   </KernelMassMemory>
+   <WFAKernel id="9780FA9E-097F-4A0E-BAAD-3B86AEFC3CDC">
+    <properties>
+     <Version type="bstr" value="1.0"/>
+     <VirtLiMapping type="array|bstr" count="0" value=""/>
+    </properties>
+    <OptionsInfo>
+     <properties>
+      <OptionString type="bstr" value="RTO_2.15.2.0/1316.1000k14/400140/"/>
+     </properties>
+    </OptionsInfo>
+    <WFAKernel>
+     <properties>
+      <Path type="bstr" value="D:\x5cnoisemeas\x5c0_Settings.Kernel"/>
+     </properties>
+    </WFAKernel>
+   </WFAKernel>
+   <WFAAppPower id="790903D3-5E3D-482A-AFCF-1CE0002CB343">
+    <properties>
+     <Version type="bstr" value="1.0"/>
+     <VirtLiMapping type="array|bstr" count="0" value=""/>
+    </properties>
+    <WFAAppPower>
+     <properties>
+      <Path type="bstr" value="D:\x5cnoisemeas\x5c0_Settings.WFAAppPower"/>
+     </properties>
+    </WFAAppPower>
+   </WFAAppPower>
+   <WFABase id="08EA7316-AA61-4BB4-83FC-BA8090E75DA6">
+    <properties>
+     <Version type="bstr" value="1.0"/>
+     <VirtLiMapping type="array|bstr" count="0" value=""/>
+    </properties>
+    <WFABase>
+     <properties>
+      <Path type="bstr" value="D:\x5cnoisemeas\x5c0_Settings.Base"/>
+     </properties>
+    </WFABase>
+   </WFABase>
+  </SaveRecallManager>
+ </Tree>
+</swpl>
+

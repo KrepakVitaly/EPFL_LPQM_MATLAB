@@ -23,10 +23,18 @@ classdef Gui < handle
         FirmwarePathEdit;
         FirmwarePath;
         FirmwareBrowseButton;
+        SerialNumField;
+        SerialNumString;
+        Slider;
+        SliderValue;
+        FullScale;
+        ModuleIsOpened;
     end;
 
     methods
         function obj = Gui
+            % This function runs when the obj is created
+            ModuleIsOpened = false;
             obj.uiInit;
             % Load Visual Studio Library
             NET.addAssembly('C:/Program Files (x86)/Signadyne/Libraries/VisualStudio_AnyCPU/Reference Assemblies/VS2008/Signadyne.dll');
@@ -51,21 +59,32 @@ classdef Gui < handle
                    '*.*',  'All Files (*.*)'}, ...
                    'Select a firmware file', ...
                    'MultiSelect', 'off'); 
-               obj.FirmwarePath = strcat(pathname, filename);
-               obj.FirmwarePathEdit.String = obj.FirmwarePath;
+               if (filename ~= '')
+                   obj.FirmwarePath = strcat(pathname, filename);
+                   obj.FirmwarePathEdit.String = obj.FirmwarePath;
+               end
         end
         
         function firmwareLoad(obj, ~, ~)
                obj.Aio.FPGAload(obj.FirmwarePathEdit.String);
         end
         
+        function sliderChange(obj, ~, ~)
+            full_scale = (round(obj.Slider.Value*10)/10)
+            
+               obj.SliderValue.String = full_scale;
+               AIN_IMPEDANCE_50=0;
+               AIN_IMPEDANCE_HIZ=1;
+               AIN_COUPLING_DC=0;
+               AIN_COUPLING_AC=1;
+               %obj.Aio.channelInputConfig(0, double fullScale, int impedance, int coupling)
+               obj.Aio.channelInputConfig(0, full_scale, AIN_IMPEDANCE_50, AIN_COUPLING_DC)
+        end
+        
         function writeDelay(obj, ~, ~)
             delay = str2num(obj.DelayEdit.String)*10;
-%             delay = [delay0 delay0 delay0 delay0];
-%             pv = libpointer('int32Ptr',delay0);
             obj.Aio.FPGAwritePCport(0, delay, 0, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
-%                                                              (int moduleID, int port, int* buffer, int nDW, int address, int addressMode, int accessMode);
-%             Signadyne.SD_Module_Import.SD_Module_FPGAwritePCport(obj.SDmoduleID, 0, pv, 1, 0, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA );
+%                    (int moduleID, int port, int* buffer, int nDW, int address, int addressMode, int accessMode);
         end
     end
         

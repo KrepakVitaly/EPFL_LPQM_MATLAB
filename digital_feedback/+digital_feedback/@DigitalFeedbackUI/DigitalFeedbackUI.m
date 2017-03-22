@@ -57,14 +57,14 @@ classdef DigitalFeedbackUI < handle
 %           uimenu(frh,'Label','Value...', 'Callback','disp(''value'')');
 
             %% Controlling the hardware
-            obj.ForceInitButton = uicontrol(obj.Figure, 'CallBack', @parent.forceModuleInit);
+            obj.ForceInitButton = uicontrol(obj.Figure, 'CallBack', @obj.forceModuleInit);
             obj.ForceInitButton.Style = 'pushbutton';
             obj.ForceInitButton.Units = 'normalized';
             obj.ForceInitButton.FontSize = 12;
             obj.ForceInitButton.String = '<html><center>Find&Init<br>Signadyne Module';
             obj.ForceInitButton.HorizontalAlignment = 'center';
             
-            obj.FirmwareLoadButton = uicontrol(obj.Figure, 'CallBack', @parent.firmwareLoad);
+            obj.FirmwareLoadButton = uicontrol(obj.Figure, 'CallBack', @obj.firmwareLoad);
             obj.FirmwareLoadButton.Style = 'pushbutton';
             obj.FirmwareLoadButton.Units = 'normalized';
             obj.FirmwareLoadButton.FontSize = 12;
@@ -85,14 +85,14 @@ classdef DigitalFeedbackUI < handle
             obj.FirmwarePathEdit.String = strcat(pwd, '\firmware_digital_delay_2017-03-09T20_29_58.sbp');
             obj.FirmwarePathEdit.HorizontalAlignment = 'left';
             
-            obj.FirmwareBrowseButton = uicontrol(obj.Figure, 'CallBack', @parent.firmwareBrowse);
+            obj.FirmwareBrowseButton = uicontrol(obj.Figure, 'CallBack', @obj.firmwareBrowse);
             obj.FirmwareBrowseButton.Style = 'pushbutton';
             obj.FirmwareBrowseButton.Units = 'normalized';
             obj.FirmwareBrowseButton.FontSize = 10;
             obj.FirmwareBrowseButton.String = '<html><center>Browse';
             obj.FirmwareBrowseButton.HorizontalAlignment = 'center';
             
-            obj.Slider = uicontrol(obj.Figure, 'CallBack', @parent.sliderChange);
+            obj.Slider = uicontrol(obj.Figure, 'CallBack', @obj.sliderChange);
             obj.Slider.Style = 'slider';
             obj.Slider.Units = 'normalized';
             obj.Slider.SliderStep = [0.01 0.1];
@@ -251,6 +251,45 @@ classdef DigitalFeedbackUI < handle
         function closeobj(obj,~,~)
         % This function runs when the obj is closed
             delete(obj.Figure);
+        end
+        
+        function sliderChange(obj, ~, ~)
+            full_scale = (round(obj.Slider.Value*10)/10);
+            
+            obj.SliderValue.String = full_scale;
+            AIN_IMPEDANCE_50=0;
+            AIN_IMPEDANCE_HIZ=1;
+            AIN_COUPLING_DC=0;
+            AIN_COUPLING_AC=1;
+            %obj.Aio.channelInputConfig(0, double fullScale, int impedance, int coupling)
+            obj.Parent.Aio.channelInputConfig(0, full_scale, AIN_IMPEDANCE_50, AIN_COUPLING_DC)
+        end
+        
+        function firmwareBrowse(obj, ~, ~)
+               [filename, pathname, ~] = uigetfile( ...
+                {  '*.sbp','Firmware files (*.sbp)'; ...
+                   '*.*',  'All Files (*.*)'}, ...
+                   'Select a firmware file', ...
+                   'MultiSelect', 'off');
+               
+               if (filename)
+                   obj.FirmwarePath = strcat(pathname, filename);
+                   obj.FirmwarePathEdit.String = obj.FirmwarePath;
+               end
+        end
+        
+        function forceModuleInit(obj, ~, ~)
+            obj.Parent.moduleInit;
+        end
+        
+        function firmwareLoad(obj, ~, ~)
+               obj.Parent.Aio.FPGAload(obj.FirmwarePathEdit.String);
+        end
+        
+        function writeDelay(obj, ~, ~)
+            delay = str2num(obj.DelayEdit.String);
+%                    (int moduleID, int port, int* buffer, int nDW, int address, int addressMode, int accessMode);
+            obj.Parent.Aio.FPGAwritePCport(0, delay, 0, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
         end
         
         function update(obj)

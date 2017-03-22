@@ -1,50 +1,28 @@
-classdef Gui < handle
+classdef DigitalFeedback < handle
     properties
-        Figure;                  % Graphics handles
-        DelayLabel;
-        DelayEdit;
-        ForceInitButton;
-        WriteDelayButton;
-        FirmwareLoadButton;
-        Panel;
-        ProductNameString;
-        ProductNameField;
-        ModuleCountString;
-        ModuleCountField;
-        SlotString;
-        SlotField;
-        ChassisString;
-        ChassisField;
-        SerialNumberString;
-        SerialNumberField;
         Aio;
         SDmoduleID;
-        FirmwarePathLabel;
-        FirmwarePathEdit;
-        FirmwarePath;
-        FirmwareBrowseButton;
-        SerialNumField;
-        SerialNumString;
-        Slider;
-        SliderValue;
         FullScale;
         ModuleIsOpened;
+        DigitalFeedbackUI_Instance;
     end;
 
     methods
-        function obj = Gui
+        function obj = DigitalFeedback
             % This function runs when the obj is created
             ModuleIsOpened = false;
-            obj.uiInit;
+            obj.DigitalFeedbackUI_Instance = digital_feedback.DigitalFeedbackUI(obj);
+            
             % Load Visual Studio Library
             NET.addAssembly('C:/Program Files (x86)/Signadyne/Libraries/VisualStudio_AnyCPU/Reference Assemblies/VS2008/Signadyne.dll');
             obj.Aio = Signadyne.SD_AIO();
-
         end
-        
+    end
+     
+    methods (Access = public)
         function closeobj(obj,~,~)
         % This function runs when the obj is closed
-            delete(obj.Figure);
+            delete(obj.DigitalFeedbackUI_Instance);
             obj.Aio.close();
         end
         
@@ -54,8 +32,7 @@ classdef Gui < handle
         
         function firmwareBrowse(obj, ~, ~)
                [filename, pathname, ~] = uigetfile( ...
-                {  '*.mat','MAT-files (*.mat)'; ...
-                   '*.slx;*.mdl','Models (*.slx, *.mdl)'; ...
+                {  '*.sbp','Firmware files (*.sbp)'; ...
                    '*.*',  'All Files (*.*)'}, ...
                    'Select a firmware file', ...
                    'MultiSelect', 'off'); 
@@ -70,26 +47,26 @@ classdef Gui < handle
         end
         
         function sliderChange(obj, ~, ~)
-            full_scale = (round(obj.Slider.Value*10)/10)
+            full_scale = (round(obj.Slider.Value*10)/10);
             
-               obj.SliderValue.String = full_scale;
-               AIN_IMPEDANCE_50=0;
-               AIN_IMPEDANCE_HIZ=1;
-               AIN_COUPLING_DC=0;
-               AIN_COUPLING_AC=1;
-               %obj.Aio.channelInputConfig(0, double fullScale, int impedance, int coupling)
-               obj.Aio.channelInputConfig(0, full_scale, AIN_IMPEDANCE_50, AIN_COUPLING_DC)
+            obj.SliderValue.String = full_scale;
+            AIN_IMPEDANCE_50=0;
+            AIN_IMPEDANCE_HIZ=1;
+            AIN_COUPLING_DC=0;
+            AIN_COUPLING_AC=1;
+            %obj.Aio.channelInputConfig(0, double fullScale, int impedance, int coupling)
+            obj.Aio.channelInputConfig(0, full_scale, AIN_IMPEDANCE_50, AIN_COUPLING_DC)
         end
         
         function writeDelay(obj, ~, ~)
             delay = str2num(obj.DelayEdit.String)*10;
-            obj.Aio.FPGAwritePCport(0, delay, 0, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
 %                    (int moduleID, int port, int* buffer, int nDW, int address, int addressMode, int accessMode);
+            obj.Aio.FPGAwritePCport(0, delay, 0, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
         end
     end
         
     methods (Access = private)
         moduleInit(obj);
-        err_code = uiInit(obj);
     end
-end                                                      % End of class definition
+end
+% End of class definition

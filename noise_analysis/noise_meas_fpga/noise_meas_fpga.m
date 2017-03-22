@@ -74,7 +74,7 @@ plot( Data1uW_pickoff_out_g_5MHz_LPF(: ,1), mag2db(abs(Data1uW_pickoff_out_g_5MH
 hline = refline([0 mean_noise(10)]);
 hline.Color = 'y';
 hold off
-ylabel('Amplitude, dB');
+ylabel('Amplitude, dB');  
 xlabel('Frequency, Hz');
 legend('1uW pickoff input','REFLINE 1uW pickoff input', '1uW pickoff out', 'REFLINE 1uW pickoff out', '1uW pickoff out 5MHzLPF');
 

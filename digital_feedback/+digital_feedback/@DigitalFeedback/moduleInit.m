@@ -1,18 +1,20 @@
 function moduleInit(obj)
             module_count = Signadyne.SD_Module.moduleCount();
-            obj.ModuleCountString.String = module_count;
+            obj.DigitalFeedbackUI_Instance.ModuleCountString.String = module_count;
             
             slot = Signadyne.SD_Module.getSlot(0);
-            obj.SlotString.String = slot;
+            obj.DigitalFeedbackUI_Instance.SlotString.String = slot;
             
             chassis = Signadyne.SD_Module.getChassis(0);
-            obj.ChassisString.String = chassis;
+            obj.DigitalFeedbackUI_Instance.ChassisString.String = chassis;
             
             product_name = char(Signadyne.SD_Module.getProductName(chassis, slot));
-            obj.ProductNameString.String = product_name;
+            obj.DigitalFeedbackUI_Instance.ProductNameString.String = product_name;
             
             serial_number = char(Signadyne.SD_Module.getSerialNumber(chassis, slot));
-            obj.SerialNumString.String = serial_number;
+            obj.DigitalFeedbackUI_Instance.SerialNumString.String = serial_number;
+            
+            obj.DigitalFeedbackUI_Instance.update();
                        
             if obj.Aio.isOpen() % By default module should not be opened.
                 disp('AIOmodule is alredy opened. I will close it.');

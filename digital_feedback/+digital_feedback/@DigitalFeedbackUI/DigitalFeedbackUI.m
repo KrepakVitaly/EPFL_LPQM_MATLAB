@@ -257,12 +257,13 @@ classdef DigitalFeedbackUI < handle
             full_scale = (round(obj.Slider.Value*10)/10);
             
             obj.SliderValue.String = full_scale;
+            obj.Parent.SignadyneModule_Instance.FullScale = full_scale;
             AIN_IMPEDANCE_50=0;
             AIN_IMPEDANCE_HIZ=1;
             AIN_COUPLING_DC=0;
             AIN_COUPLING_AC=1;
             %obj.Aio.channelInputConfig(0, double fullScale, int impedance, int coupling)
-            obj.Parent.Aio.channelInputConfig(0, full_scale, AIN_IMPEDANCE_50, AIN_COUPLING_DC)
+            obj.Parent.SignadyneModule_Instance.Aio.channelInputConfig(0, full_scale, AIN_IMPEDANCE_50, AIN_COUPLING_DC)
         end
         
         function firmwareBrowse(obj, ~, ~)
@@ -279,17 +280,17 @@ classdef DigitalFeedbackUI < handle
         end
         
         function forceModuleInit(obj, ~, ~)
-            obj.Parent.moduleInit;
+            obj.Parent.SignadyneModule_Instance.moduleInit;
         end
         
         function firmwareLoad(obj, ~, ~)
-               obj.Parent.Aio.FPGAload(obj.FirmwarePathEdit.String);
+               obj.Parent.SignadyneModule_Instance.Aio.FPGAload(obj.FirmwarePathEdit.String);
         end
         
         function writeDelay(obj, ~, ~)
             delay = str2num(obj.DelayEdit.String);
 %                    (int moduleID, int port, int* buffer, int nDW, int address, int addressMode, int accessMode);
-            obj.Parent.Aio.FPGAwritePCport(0, delay, 0, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
+            obj.Parent.SignadyneModule_Instance.Aio.FPGAwritePCport(0, delay, 0, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
         end
         
         function update(obj)

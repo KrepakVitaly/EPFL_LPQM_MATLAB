@@ -1,20 +1,20 @@
 function moduleInit(obj)
             module_count = Signadyne.SD_Module.moduleCount();
-            obj.DigitalFeedbackUI_Instance.ModuleCountString.String = module_count;
+            obj.Parent.DigitalFeedbackUI_Instance.ModuleCountString.String = module_count;
             
             slot = Signadyne.SD_Module.getSlot(0);
-            obj.DigitalFeedbackUI_Instance.SlotString.String = slot;
+            obj.Parent.DigitalFeedbackUI_Instance.SlotString.String = slot;
             
             chassis = Signadyne.SD_Module.getChassis(0);
-            obj.DigitalFeedbackUI_Instance.ChassisString.String = chassis;
+            obj.Parent.DigitalFeedbackUI_Instance.ChassisString.String = chassis;
             
             product_name = char(Signadyne.SD_Module.getProductName(chassis, slot));
-            obj.DigitalFeedbackUI_Instance.ProductNameString.String = product_name;
+            obj.Parent.DigitalFeedbackUI_Instance.ProductNameString.String = product_name;
             
             serial_number = char(Signadyne.SD_Module.getSerialNumber(chassis, slot));
-            obj.DigitalFeedbackUI_Instance.SerialNumString.String = serial_number;
+            obj.Parent.DigitalFeedbackUI_Instance.SerialNumString.String = serial_number;
             
-            obj.DigitalFeedbackUI_Instance.update();
+            obj.Parent.DigitalFeedbackUI_Instance.update();
                        
             if obj.Aio.isOpen() % By default module should not be opened.
                 disp('AIOmodule is alredy opened. I will close it.');
@@ -27,7 +27,7 @@ function moduleInit(obj)
                 disp('Aborting...');
                 return;
             else
-                ModuleIsOpened = true;
+                obj.IsModuleOpen = true;
             end
             
             %http://literature.cdn.keysight.com/litweb/pdf/M3100-90002.pdf?id=2796080

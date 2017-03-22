@@ -21,8 +21,8 @@ function moduleInit(obj)
                 obj.Aio.close();
             end
             % Open module
-            SDmoduleID = obj.Aio.open(product_name, chassis, slot);
-            if SDmoduleID < 0
+            obj.SDmoduleID = obj.Aio.open(product_name, chassis, slot);
+            if obj.SDmoduleID < 0
                 disp(['Error opening AIOmodule ', product_name, ', make sure the slot and chassis are correct.']);
                 disp('Aborting...');
                 return;
@@ -31,15 +31,19 @@ function moduleInit(obj)
             end
             
             %http://literature.cdn.keysight.com/litweb/pdf/M3100-90002.pdf?id=2796080
-            AIN_IMPEDANCE_50=0;
-            AIN_IMPEDANCE_HIZ=1;
-            AIN_COUPLING_DC=0;
-            AIN_COUPLING_AC=1;
             
-            %obj.Aio.channelInputConfig(0, double fullScale, int impedance, int coupling)
-            obj.Aio.channelInputConfig(0, 3.0, AIN_IMPEDANCE_50, AIN_COUPLING_DC);
-            obj.Aio.DAQconfig(0, 500, 1, 0, 0);
-            obj.Aio.DAQconfig(1, 500, 1, 0, 0);
+            obj.Aio.channelInputConfig(0,... %channel
+                digital_feedback.Consts.DEFAULT_FULL_SCALE,...
+                digital_feedback.Consts.DEFAULT_AIN_IMPEDANCE,...
+                digital_feedback.Consts.DEFAULT_AIN_COUPLING);
+            
+            obj.Aio.DAQconfig(...
+                0,...   %nDAQ
+                500,... %nDAQpointsPerCycle
+                1,...   %nCycles
+                0,...   %triggerDelay
+                0 );    %triggerMode
+            
             obj.Aio.DAQstart(0);
 %             obj.Aio.DAQstart(1);
 end

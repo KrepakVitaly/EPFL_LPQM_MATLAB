@@ -16,6 +16,22 @@ classdef DigitalFeedback < handle
             delete(obj.DigitalFeedbackUI_Instance);
             delete(obj.SignadyneModule_Instance);
         end
+        
+        function WriteDelay(delay)
+            disp('WriteDelay');
+        end
+        
+        function WriteFullScale(full_scale)
+            disp('WriteFullScale');
+        end
+        
+        function FirmwareLoad(filename)
+            disp('FirmwareLoad');
+        end
+        
+        function ForceModuleInit()
+            disp('ForceModuleInit');
+        end
     end
 end
 % End of class definition

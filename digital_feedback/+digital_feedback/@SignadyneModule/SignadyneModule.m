@@ -12,6 +12,7 @@ classdef SignadyneModule < handle
     methods
         function obj = SignadyneModule ( parent )
             obj.Parent = parent;
+            obj.FullScale = digital_feedback.Consts.DEFAULT_FULL_SCALE;
             obj.IsModuleOpen = false;
             % Load Visual Studio Library
             NET.addAssembly('C:/Program Files (x86)/Signadyne/Libraries/VisualStudio_AnyCPU/Reference Assemblies/VS2008/Signadyne.dll');

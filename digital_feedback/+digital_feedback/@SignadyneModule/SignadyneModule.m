@@ -6,6 +6,8 @@ classdef SignadyneModule < handle
         SDmoduleID;
         FullScale;
         Parent;
+        Impedance;
+        Coupling;
         IsModuleOpen;
     end
     
@@ -13,6 +15,8 @@ classdef SignadyneModule < handle
         function obj = SignadyneModule ( parent )
             obj.Parent = parent;
             obj.FullScale = digital_feedback.Consts.DEFAULT_FULL_SCALE;
+            obj.Impedance = digital_feedback.Consts.DEFAULT_AIN_IMPEDANCE;
+            obj.Coupling = digital_feedback.Consts.DEFAULT_AIN_COUPLING;
             obj.IsModuleOpen = false;
             % Load Visual Studio Library
             NET.addAssembly('C:/Program Files (x86)/Signadyne/Libraries/VisualStudio_AnyCPU/Reference Assemblies/VS2008/Signadyne.dll');
@@ -26,8 +30,7 @@ classdef SignadyneModule < handle
     end
     
     methods (Access = public)
-        moduleInit(obj);
+        err_code = moduleInit(obj);
     end
-    
 end
 

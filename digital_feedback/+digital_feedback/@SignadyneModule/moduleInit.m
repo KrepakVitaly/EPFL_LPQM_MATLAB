@@ -1,4 +1,4 @@
-function moduleInit(obj)
+function err_code = moduleInit(obj)
             module_count = Signadyne.SD_Module.moduleCount();
             obj.Parent.DigitalFeedbackUI_Instance.ModuleCountString.String = module_count;
             
@@ -25,26 +25,26 @@ function moduleInit(obj)
             if obj.SDmoduleID < 0
                 disp(['Error opening AIOmodule ', product_name, ', make sure the slot and chassis are correct.']);
                 disp('Aborting...');
+                err_code = obj.SDmoduleID;
                 return;
             else
                 obj.IsModuleOpen = true;
+                err_code = 0;
             end
             
-            %http://literature.cdn.keysight.com/litweb/pdf/M3100-90002.pdf?id=2796080
+            err_code = obj.Aio.channelInputConfig(0,... %channel
+                        obj.FullScale,...
+                        obj.Impedance,...
+                        obj.Coupling);
             
-            obj.Aio.channelInputConfig(0,... %channel
-                digital_feedback.Consts.DEFAULT_FULL_SCALE,...
-                digital_feedback.Consts.DEFAULT_AIN_IMPEDANCE,...
-                digital_feedback.Consts.DEFAULT_AIN_COUPLING);
-            
-            obj.Aio.DAQconfig(...
+            err_code = obj.Aio.DAQconfig(...
                 0,...   %nDAQ
                 500,... %nDAQpointsPerCycle
                 1,...   %nCycles
                 0,...   %triggerDelay
                 0 );    %triggerMode
             
-            obj.Aio.DAQstart(0);
+            err_code = obj.Aio.DAQstart(0);
 %             obj.Aio.DAQstart(1);
 end
 

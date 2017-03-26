@@ -7,8 +7,9 @@ classdef DigitalFeedback < handle
     methods
         function obj = DigitalFeedback
         % This function runs when the obj is created
-            obj.DigitalFeedbackUI_Instance = digital_feedback.DigitalFeedbackUI(obj);
             obj.SignadyneModule_Instance = digital_feedback.SignadyneModule(obj);
+            obj.DigitalFeedbackUI_Instance = digital_feedback.DigitalFeedbackUI(obj);
+            
         end
         
         function delete(obj)

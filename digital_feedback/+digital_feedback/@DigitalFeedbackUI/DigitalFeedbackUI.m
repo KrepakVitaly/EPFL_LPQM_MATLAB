@@ -4,6 +4,7 @@ classdef DigitalFeedbackUI < handle
     properties
         Figure;
         DelayLabel;
+        DelayAddressLabel;
         DelayEdit;
         ForceInitButton;
         WriteDelayButton;
@@ -14,6 +15,7 @@ classdef DigitalFeedbackUI < handle
         ModuleCountString;
         ModuleCountField;
         SlotString;
+        ChangeDelayLineButton;
         SlotField;
         ChassisString;
         ChassisField;
@@ -30,16 +32,24 @@ classdef DigitalFeedbackUI < handle
         FirmwareLoadStatus;
         SerialNumField;
         ImpedanceInputMenu;
+        ChangeDelayLineLabel;
         SerialNumString;
         Slider;
         SliderValue;
         Parent;
         TGroup;
         TabPhaseShifter;
+        select_mux;
+        select_addr;
+        delay;
+        
     end;
     
     methods
         function obj = DigitalFeedbackUI ( parent )
+            obj.select_mux = 0;
+            obj.select_addr = 1;
+            obj.delay = 0;
             obj.Parent = parent;
             %% Main figure
             obj.Figure = figure();
@@ -95,7 +105,7 @@ classdef DigitalFeedbackUI < handle
             obj.FirmwarePathEdit.Style = 'edit';
             obj.FirmwarePathEdit.Units = 'normalized';
             obj.FirmwarePathEdit.FontSize = 12;
-            obj.FirmwarePathEdit.String = strcat(pwd, '\firmware_digital_delay_2017-03-09T20_29_58.sbp');
+            obj.FirmwarePathEdit.String = strcat(pwd, '\firmware_digital_delay_2017-03-24T20_01_40.sbp');
             obj.FirmwarePathEdit.HorizontalAlignment = 'left';
             
             obj.FirmwareBrowseButton = uicontrol(obj.Figure, 'CallBack', @obj.FirmwareBrowse);
@@ -187,6 +197,27 @@ classdef DigitalFeedbackUI < handle
             obj.WriteDelayButton.FontSize = 12;
             obj.WriteDelayButton.String = '<html><center>Write Delay';
             obj.WriteDelayButton.HorizontalAlignment = 'center';
+            
+            obj.DelayAddressLabel = uicontrol(obj.TabPhaseShifter);
+            obj.DelayAddressLabel.Style = 'text';
+            obj.DelayAddressLabel.Units = 'normalized';
+            obj.DelayAddressLabel.FontSize = 12;
+            obj.DelayAddressLabel.String = num2str(obj.select_addr);
+            obj.DelayAddressLabel.HorizontalAlignment = 'left';
+            
+            obj.ChangeDelayLineButton = uicontrol(obj.TabPhaseShifter, 'CallBack', @obj.ChangeDelayLine);
+            obj.ChangeDelayLineButton.Style = 'pushbutton';
+            obj.ChangeDelayLineButton.Units = 'normalized';
+            obj.ChangeDelayLineButton.FontSize = 12;
+            obj.ChangeDelayLineButton.String = '<html><center>Change Mux Output';
+            obj.ChangeDelayLineButton.HorizontalAlignment = 'center';
+            
+            obj.ChangeDelayLineLabel = uicontrol(obj.TabPhaseShifter);
+            obj.ChangeDelayLineLabel.Style = 'text';
+            obj.ChangeDelayLineLabel.Units = 'normalized';
+            obj.ChangeDelayLineLabel.FontSize = 12;
+            obj.ChangeDelayLineLabel.String = num2str(obj.select_mux);
+            obj.ChangeDelayLineLabel.HorizontalAlignment = 'left';
             %% Panel with hardware information
             font_size_text_panel = 9;
             
@@ -258,7 +289,12 @@ classdef DigitalFeedbackUI < handle
             % Phase-shift tab
             obj.DelayLabel.Position       = [.10 .40 .35 .20]; %[left bottom width height]
             obj.DelayEdit.Position        = [.40 .40 .20 .20]; %[left bottom width height]
-            obj.WriteDelayButton.Position = [.70 .30 .20 .40]; %[left bottom width height]
+            
+            obj.WriteDelayButton.Position  = [.70 .30 .20 .40]; %[left bottom width height]
+            obj.DelayAddressLabel.Position = [.70 .00 .20 .10]; %[left bottom width height]
+            
+            obj.ChangeDelayLineButton.Position = [.00 .30 .20 .40]; %[left bottom width height]
+            obj.ChangeDelayLineLabel.Position  = [.00 .00 .20 .10]; %[left bottom width height]
             % Controlling the hardware
             obj.ForceInitButton.Position      = [.205 .205 .20 .20]; %[left bottom width height]
             obj.FirmwareLoadButton.Position   = [.005 .205 .20 .20]; %[left bottom width height]
@@ -334,6 +370,7 @@ classdef DigitalFeedbackUI < handle
                 obj.FirmwareLoadButton.Enable = 'on';
                 obj.CouplingInputMenu.Enable = 'on';
             end
+            obj.ResetAllDelays();
         end
         
         function FirmwareLoad(obj, ~, ~)
@@ -351,12 +388,58 @@ classdef DigitalFeedbackUI < handle
         
         function WriteDelay(obj, ~, ~)
             delay = str2num(obj.DelayEdit.String);
-%                    (int moduleID, int port, int* buffer, int nDW, int address, int addressMode, int accessMode);
-            err_code = obj.Parent.SignadyneModule_Instance.Aio.FPGAwritePCport(0, delay, 0, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
+%             disp('------------------------------');
+%             disp('write delay');
+%             disp(delay);
+%             disp('Select address');
+%             disp(obj.select_addr);
+%             disp('Select mux');
+%             disp(obj.select_mux);
+
+            err_code = obj.Parent.SignadyneModule_Instance.Aio.FPGAwritePCport(0, delay, obj.select_addr, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
+            if (err_code)
+                errordlg(strcat('AIO module error: ', num2str(err_code)),'Error');
+                return
+            end
+            
+            err_code = obj.Parent.SignadyneModule_Instance.Aio.FPGAwritePCport(1, obj.select_mux, 0,  Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
+            if (err_code)
+                errordlg(strcat('AIO module error: ', num2str(err_code)),'Error');
+            else
+                obj.delay = delay;
+            end
+        end
+        
+        function ChangeDelayLine(obj, ~, ~)
+            obj.select_mux = obj.select_mux + 1;
+            if (obj.select_mux == 4)
+                obj.select_mux = 0;
+            end
+            
+            obj.select_addr = bitsll(obj.select_addr, 1);
+            if (obj.select_addr > 8)
+                obj.select_addr = 1;
+            end
+%             disp('=--------------------');
+%             disp('select_mux');
+%             disp(obj.select_mux);
+%             disp('select_addr');
+%             disp(obj.select_addr);
+            obj.ChangeDelayLineLabel.String = num2str(obj.select_mux);
+            obj.DelayAddressLabel.String   = num2str(obj.select_addr);
+            
+%                   (int port, int[] buffer, int address, SD_AddressingMode addressMode, SD_AccessMode accessMode)
+%             err_code = obj.Parent.SignadyneModule_Instance.Aio.FPGAwritePCport(0, obj.delay, obj.select_addr, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
+%             if (err_code)
+%                 errordlg(strcat('AIO module error: ', num2str(err_code)),'Error');
+%             end
+            
+            err_code = obj.Parent.SignadyneModule_Instance.Aio.FPGAwritePCport(1, obj.select_mux, 0,  Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
             if (err_code)
                 errordlg(strcat('AIO module error: ', num2str(err_code)),'Error');
             end
         end
+        
         
         function CouplingInputChange(obj, ~, ~)
             coupling_value = obj.CouplingInputMenu.Value - 1;
@@ -387,6 +470,31 @@ classdef DigitalFeedbackUI < handle
                 obj.Parent.SignadyneModule_Instance.Impedance,...
                 obj.Parent.SignadyneModule_Instance.Coupling);
             
+        end
+        
+        function ResetAllDelays(obj, ~, ~)
+            err_code = obj.Parent.SignadyneModule_Instance.Aio.FPGAwritePCport(0, 0, 1, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
+            if (err_code)
+                errordlg(strcat('AIO module error: ', num2str(err_code)),'Error');
+                return
+            end
+            err_code = obj.Parent.SignadyneModule_Instance.Aio.FPGAwritePCport(0, 0, 2, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
+            if (err_code)
+                errordlg(strcat('AIO module error: ', num2str(err_code)),'Error');
+                return
+            end
+            err_code = obj.Parent.SignadyneModule_Instance.Aio.FPGAwritePCport(0, 0, 4, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
+            if (err_code)
+                errordlg(strcat('AIO module error: ', num2str(err_code)),'Error');
+                return
+            end
+            err_code = obj.Parent.SignadyneModule_Instance.Aio.FPGAwritePCport(0, 0, 8, Signadyne.SD_AddressingMode.FIXED, Signadyne.SD_AccessMode.NONDMA);
+            if (err_code)
+                errordlg(strcat('AIO module error: ', num2str(err_code)),'Error');
+                return
+            end
+
+            obj.delay = 0;
         end
         
         function update(obj)

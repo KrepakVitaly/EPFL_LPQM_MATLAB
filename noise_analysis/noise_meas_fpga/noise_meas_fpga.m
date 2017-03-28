@@ -1,4 +1,4 @@
-clear all; close all;
+% clear all; close all;
 cd(fileparts(mfilename('fullpath')));
 
 START_AVERAGING = 9000;
@@ -27,7 +27,7 @@ Data1uW_pickoff_out_g_5MHz_LPF = ...
 
 legend_array = {'Input signal', 'FPGAout, no filtering, FS=1.5V', 'FPGAout, 5MHz LPF,FS=1.5V', 'FPGAout 5MHz LPF, 1.4MHz HPF, FS=1.5V',...
     'FPGAout, 5MHz LPF, FS=1V', 'FPGAout, 5MHz LPF, FS=2V', 'FPGAout, 5MHz LPF, FS=3V',...
-    'FPGAout, 5MHz LPF, FS=4V', 'FPGAout, 5MHz LPF, FS=3V, 3dB atten', 'FPGAout, 5MHz LPF, FS=3V, 3dB atten' };
+    'FPGAout, 5MHz LPF, FS=4V', 'FPGAout, 5MHz LPF, FS=3V, 3dB atten', 'FPGAout, 5MHz LPF, FS=3V, AMP+atten 20dB' };
 
 frequencies = Data1uW_pickoff_out_b_5MHz_LPF(: ,1);
 freq_size = size(frequencies);
@@ -79,23 +79,26 @@ snr = (data_peaks - mean_noise).';
 % ylabel('Singal max value to noise level ratio, dB');
 % xlabel('Different settings of feedback');
 
-for n = 2:data_num
-    figure
-    hold on
-    plot( frequencies, data_array(:,1) - data_peaks(1) );
-    plot( frequencies, data_array(:,n) - data_peaks(n) );
-    hold off
-    ylabel('Amplitude, dB');  
-    xlabel('Frequency, Hz');
-    legend([legend_array(1), legend_array(n)] );
-end
+% for n = 2:data_num
+%     figure
+%     hold on
+%     plot( frequencies, data_array(:,1) - data_peaks(1) );
+%     plot( frequencies, data_array(:,n) - data_peaks(n) );
+%     hold off
+%     ylabel('Amplitude, dB');  
+%     xlabel('Frequency, Hz');
+%     legend([legend_array(1), legend_array(n)] );
+% end
 figure
 hold on
+% n=1
+plotStyle = [[0 1 0]; [1 0 0]; [0 0 1]; [0 1 1]; [1 1 0]; [1 0 1]; [0 0.5 0.1]; [0.5 0.5 0.1]; [0.5 0.1 0.5]; [0.1 0.5 0.5]];
+plotStyle(n, :)
 for n = 1:data_num
-    plot( frequencies, data_array(:,1) - data_peaks(1) - data_array(:,n) + data_peaks(n) );
+    plot( frequencies, -data_array(:,1) + data_peaks(1) + data_array(:,n) - data_peaks(n), 'Color',plotStyle(n, :) );
 end
 hold off
-ylabel('Amplitude, dB');  
+ylabel('Added Noise, dB');  
 xlabel('Frequency, Hz');
 legend(legend_array);
 

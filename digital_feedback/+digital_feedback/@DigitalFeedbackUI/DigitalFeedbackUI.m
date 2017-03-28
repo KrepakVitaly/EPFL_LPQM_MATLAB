@@ -293,7 +293,7 @@ classdef DigitalFeedbackUI < handle
             obj.WriteDelayButton.Position  = [.70 .30 .20 .40]; %[left bottom width height]
             obj.DelayAddressLabel.Position = [.70 .00 .20 .10]; %[left bottom width height]
             
-            obj.ChangeDelayLineButton.Position = [.00 .30 .20 .40]; %[left bottom width height]
+            obj.ChangeDelayLineButton.Position = [.00 .10 .20 .40]; %[left bottom width height]
             obj.ChangeDelayLineLabel.Position  = [.00 .00 .20 .10]; %[left bottom width height]
             % Controlling the hardware
             obj.ForceInitButton.Position      = [.205 .205 .20 .20]; %[left bottom width height]
